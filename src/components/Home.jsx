@@ -1,26 +1,65 @@
-import React, { useState, useEffect } from 'react'
-import { getAllTasks, deleteTask } from '../api/taskApi';
-import DeleteTaskModal from './DeleteTask';
+import React, { useState, useEffect } from "react";
+import {
+  getAllTasks,
+  deleteTask,
+  isCompleteTask,
+  editTask,
+} from "../api/taskApi";
+import { FaPlus, FaEdit, FaTrash, FaFilter, FaListUl, FaThLarge } from "react-icons/fa";
+import DeleteTaskModal from "./DeleteTask";
+import EditTaskModal from "./EditTask";
+import './Home.css'
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [editModalTask, setEditModalTask] = useState(null);
 
-    const [tasks, setTasks] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [selectedTask, setSelectedTask] = useState(null);
+  const navigate = useNavigate();
 
-   async function fetchData() {
+  async function fetchData() {
     const response = await getAllTasks();
-    console.log(response.data.tasks);
     if (response.data.success) {
       setTasks(response.data.tasks);
+      setFilteredTasks(response.data.tasks);
     }
   }
 
   useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
 
-    const handleDeleteClick = (task) => {
+  // 🔍 Search & Filter Logic
+  useEffect(() => {
+    let filtered = [...tasks];
+
+    if (searchTerm.trim() !== "") {
+      filtered = filtered.filter(
+        (task) =>
+          task.task_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.task_description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (activeFilter !== "All") {
+      if (activeFilter === "In Progress")
+        filtered = filtered.filter((t) => t.is_complete === 0);
+      else if (activeFilter === "Complete")
+        filtered = filtered.filter((t) => t.is_complete === 1);
+    }
+
+    setFilteredTasks(filtered);
+  }, [searchTerm, tasks, activeFilter]);
+
+  // 🗑️ Delete Handlers
+  const handleDeleteClick = (task) => {
     setSelectedTask(task);
     setShowModal(true);
   };
@@ -32,70 +71,208 @@ const Home = () => {
   };
 
   async function handleDelete(taskID) {
-  try {
-    const response = await deleteTask(taskID);
-    if (response.data.success) {
-    //   alert(response.data.msg);
-      setShowModal(false);   // close modal
-      setSelectedTask(null); // reset task
-      fetchData();           // refresh tasks
+    try {
+      const response = await deleteTask(taskID);
+      if (response.data.success) {
+        setShowModal(false);
+        setSelectedTask(null);
+        fetchData();
+      }
+    } catch (err) {
+      console.error("Delete error", err);
     }
-  } catch (err) {
-    console.error("Delete error", err);
   }
-}
 
+  async function handleIsComplete(taskID) {
+    try {
+      const response = await isCompleteTask(taskID);
+      if (response.data.success) {
+        fetchData();
+      } else {
+        alert("Unable to update task status");
+      }
+    } catch (err) {
+      console.error("Error updating:", err);
+    }
+  }
 
   return (
-    <>
-    <div>
-        <div className="container">
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">Sr. No</th>
-                        <th scope="col">Task Name</th>
-                        <th scope="col">Task Description</th>
-                        <th scope="col">Task IsComplete</th>
-                        <th scope="col">Start Date</th>
-                        <th scope="col">End Date</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
+    <div className="container py-4" style={{ marginLeft: "180px" }}>
+      {/* Header Section */}
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-                 <tbody>
-                   {tasks.length > 0 ? (<>
-              {
-                tasks.map((task,i)=>(
-                        <tr keys={i}>
-                <td scope="row">{i+1}</td>
-                <td>{task.task_name}</td>
-                <td>{task.task_description}</td>
-                <td>{task.is_complete == 0 ? <span>In progress</span>:<span>Completed</span>}</td>
-                <td>{task.start_date}</td>
-                <td>{task.end_date}</td>
-                <td><button className="btn btn-success">Edit</button>
-                <button className="btn btn-danger"
-                 onClick={() => handleDeleteClick(task)}
-                >Delete</button>
-                </td>
-              </tr>
-                ))
-              }
-            </>) : (
-              <tr>No task available</tr>
-            )}
-          </tbody>
-            </table>
+        <div className="d-flex align-items-end gap-2">
+          {/* <button className="btn btn-outline-secondary">
+            <FaFilter className="me-1" /> Filter
+          </button> */}
+          <button
+            className="btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold text-white shadow-sm"
+            style={{
+              background: "linear-gradient(135deg, #007bff, #0056d2)",
+              border: "none",
+              borderRadius: "12px",
+              fontSize: "15px",
+              letterSpacing: "0.5px",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #0056d2, #0041a8)")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #007bff, #0056d2)")}
+            onClick={() => navigate("/add-task")}
+          >
+            <FaPlus size={14} />
+            New Task
+          </button>
         </div>
-    </div>
-         <DeleteTaskModal show={showModal}
+      </div>
+
+      {/* Filter Tabs */}
+      <ul className="nav nav-pills mb-3 shadow-sm rounded py-2 px-3 bg-white">
+        {["All", "In Progress", "Complete"].map((filter) => (
+          <li className="nav-item" key={filter}>
+            <button
+              className={`nav-link ${activeFilter === filter ? "active" : ""
+                }`}
+              onClick={() => setActiveFilter(filter)}
+              style={{
+                fontWeight: 500,
+                borderRadius: "20px",
+                transition: "0.3s",
+              }}
+            >
+              {filter}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Search Bar */}
+      <div className="row mb-4">
+        <div className="col-md-6">
+          <input
+            type="text"
+            className="form-control shadow-sm"
+            placeholder="🔍 Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Task Table */}
+      <div className="card shadow border-0 rounded-4">
+        <div className="card-body p-0">
+          <table className="table table-hover align-middle mb-0">
+            <thead className="table-light">
+              <tr>
+                <th>Sr. No</th>
+                <th>Name & Description</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTasks.length > 0 ? (
+                filteredTasks.map((task, i) => (
+                  <tr key={i}>
+                    <td>{i + 1}</td>
+                    <td>
+                      <div>
+                        <strong>{task.task_name}</strong>
+                        <div className="text-muted small">
+                          {task.task_description}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span
+                        className={`badge rounded-pill px-3 py-2 ${task.priority === "High"
+                          ? "bg-danger"
+                          : task.priority === "Medium"
+                            ? "bg-warning text-dark"
+                            : "bg-secondary"
+                          }`}
+                      >
+                        {task.priority || "Low"}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`badge rounded-pill px-3 py-2 ${task.is_complete === 1
+                          ? "bg-success"
+                          : task.is_complete === 0
+                            ? "bg-info text-dark"
+                            : "bg-warning text-dark"
+                          }`}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleIsComplete(task.task_id)}
+                      >
+                        {task.is_complete === 1
+                          ? "Complete"
+                          : task.is_complete === 0
+                            ? "In Progress"
+                            : "Pending"}
+                      </span>
+                    </td>
+                    <td>{new Date(task.start_date).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric'
+                    })}</td>
+
+                    <td>{new Date(task.end_date).toLocaleDateString('en-GB', {
+                      day: '2-digit',
+                      month: 'short',
+                      year: 'numeric'
+                    })}</td>
+                    <td>
+                      <div className="d-flex gap-2">
+                        <button
+                          className="btn btn-outline-success btn-sm rounded-circle"
+                          onClick={() => setEditModalTask(task)}
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm rounded-circle"
+                          onClick={() => handleDeleteClick(task)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center py-4 text-muted">
+                    No tasks found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Delete Modal */}
+      <DeleteTaskModal
+        show={showModal}
         handleClose={handleClose}
         handleDelete={handleDelete}
-        task={selectedTask}/>
-         
-    </>
-  )
-}
+        task={selectedTask}
+      />
 
-export default Home
+      {/* Edit Modal */}
+      <EditTaskModal
+        task={editModalTask}
+        onClose={() => setEditModalTask(null)}
+        onUpdated={fetchData}
+      />
+    </div>
+  );
+};
+
+export default Home;
