@@ -34,29 +34,34 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // 🔍 Search & Filter Logic
-  useEffect(() => {
-    let filtered = [...tasks];
+  // 🔍 Filter & Search Logic
+useEffect(() => {
+  let filtered = [...tasks];
 
-    if (searchTerm.trim() !== "") {
+  // Search filter
+  if (searchTerm.trim() !== "") {
+    filtered = filtered.filter(
+      (task) =>
+        task.task_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.task_description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  // Active filter logic (status & priority)
+  if (activeFilter !== "All") {
+    if (["In Progress", "Complete"].includes(activeFilter)) {
+      if (activeFilter === "In Progress") filtered = filtered.filter((t) => t.is_complete === 0);
+      else if (activeFilter === "Complete") filtered = filtered.filter((t) => t.is_complete === 1);
+    } else if (["High", "Medium", "Low"].includes(activeFilter)) {
       filtered = filtered.filter(
-        (task) =>
-          task.task_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          task.task_description
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+        (t) => t.priority?.toLowerCase() === activeFilter.toLowerCase()
       );
     }
+  }
 
-    if (activeFilter !== "All") {
-      if (activeFilter === "In Progress")
-        filtered = filtered.filter((t) => t.is_complete === 0);
-      else if (activeFilter === "Complete")
-        filtered = filtered.filter((t) => t.is_complete === 1);
-    }
+  setFilteredTasks(filtered);
+}, [searchTerm, tasks, activeFilter]);
 
-    setFilteredTasks(filtered);
-  }, [searchTerm, tasks, activeFilter]);
 
   // 🗑️ Delete Handlers
   const handleDeleteClick = (task) => {
@@ -101,10 +106,34 @@ const Home = () => {
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-        <div className="d-flex align-items-end gap-2">
-          {/* <button className="btn btn-outline-secondary">
-            <FaFilter className="me-1" /> Filter
-          </button> */}
+        <div className="d-flex align-items-center gap-3">
+          {/* Priority Filter Dropdown */}
+          <div className="dropdown">
+            <button
+              className="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              id="priorityFilter"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <FaFilter className="me-1" />
+              {activeFilter === "All" ? "Filter Priority" : activeFilter}
+            </button>
+            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="priorityFilter">
+              {["All", "High", "Medium", "Low"].map((priority) => (
+                <li key={priority}>
+                  <button
+                    className={`dropdown-item ${activeFilter === priority ? "active" : ""}`}
+                    onClick={() => setActiveFilter(priority)}
+                  >
+                    {priority === "All" ? "All Priorities" : priority}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Add Task Button */}
           <button
             className="btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold text-white shadow-sm"
             style={{
@@ -115,14 +144,21 @@ const Home = () => {
               letterSpacing: "0.5px",
               transition: "all 0.3s ease",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #0056d2, #0041a8)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "linear-gradient(135deg, #007bff, #0056d2)")}
+            onMouseEnter={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(135deg, #0056d2, #0041a8)")
+            }
+            onMouseLeave={(e) =>
+            (e.currentTarget.style.background =
+              "linear-gradient(135deg, #007bff, #0056d2)")
+            }
             onClick={() => navigate("/add-task")}
           >
             <FaPlus size={14} />
             New Task
           </button>
         </div>
+
       </div>
 
       {/* Filter Tabs */}
@@ -141,6 +177,7 @@ const Home = () => {
             >
               {filter}
             </button>
+            
           </li>
         ))}
       </ul>
