@@ -11,3 +11,7 @@ export const isCompleteTask = (task_id) => axiosInstance.put(`/task/isComplete/$
 
 export const editTask = (task_id, taskData) => axiosInstance.put(`/task/editTask/${task_id}`, taskData);
 
+
+export const searchTasks = (query) => {
+    return axiosInstance.get(`/tasks/search?q=${encodeURIComponent(query)}`);
+};

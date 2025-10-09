@@ -35,32 +35,48 @@ const Home = () => {
   }, []);
 
   // 🔍 Filter & Search Logic
-useEffect(() => {
-  let filtered = [...tasks];
+  useEffect(() => {
+    let filtered = [...tasks];
 
-  // Search filter
-  if (searchTerm.trim() !== "") {
-    filtered = filtered.filter(
-      (task) =>
-        task.task_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.task_description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
-
-  // Active filter logic (status & priority)
-  if (activeFilter !== "All") {
-    if (["In Progress", "Complete"].includes(activeFilter)) {
-      if (activeFilter === "In Progress") filtered = filtered.filter((t) => t.is_complete === 0);
-      else if (activeFilter === "Complete") filtered = filtered.filter((t) => t.is_complete === 1);
-    } else if (["High", "Medium", "Low"].includes(activeFilter)) {
+    // Search filter
+    if (searchTerm.trim() !== "") {
       filtered = filtered.filter(
-        (t) => t.priority?.toLowerCase() === activeFilter.toLowerCase()
+        (task) =>
+          task.task_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.task_description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-  }
 
-  setFilteredTasks(filtered);
-}, [searchTerm, tasks, activeFilter]);
+    // Active filter logic (status & priority)
+    if (activeFilter !== "All") {
+      if (["In Progress", "Complete"].includes(activeFilter)) {
+        if (activeFilter === "In Progress") filtered = filtered.filter((t) => t.is_complete === 0);
+        else if (activeFilter === "Complete") filtered = filtered.filter((t) => t.is_complete === 1);
+      } else if (["High", "Medium", "Low"].includes(activeFilter)) {
+        filtered = filtered.filter(
+          (t) => t.priority?.toLowerCase() === activeFilter.toLowerCase()
+        );
+      }
+    }
+
+    setFilteredTasks(filtered);
+  }, [searchTerm, tasks, activeFilter]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim() === "") {
+        fetchData(); // fetch all tasks
+      } else {
+        searchTasks(searchTerm)
+          .then(res => {
+            if (res.data.success) setFilteredTasks(res.data.tasks);
+          })
+          .catch(err => console.error(err));
+      }
+    }, 300); 
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
 
   // 🗑️ Delete Handlers
@@ -102,7 +118,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="container py-4" style={{ marginLeft: "180px" }}>
+    <div className="container  py-4" style={{ marginLeft: "200px" }} >
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
@@ -177,7 +193,7 @@ useEffect(() => {
             >
               {filter}
             </button>
-            
+
           </li>
         ))}
       </ul>
@@ -196,7 +212,7 @@ useEffect(() => {
       </div>
 
       {/* Task Table */}
-      <div className="card shadow border-0 rounded-4">
+      <div className="card shadow border-0 rounded-4 overflow-hidden">
         <div className="card-body p-0">
           <table className="table table-hover align-middle mb-0">
             <thead className="table-light">
@@ -218,9 +234,7 @@ useEffect(() => {
                     <td>
                       <div>
                         <strong>{task.task_name}</strong>
-                        <div className="text-muted small">
-                          {task.task_description}
-                        </div>
+                        <div className="text-muted small">{task.task_description}</div>
                       </div>
                     </td>
                     <td>
@@ -253,17 +267,20 @@ useEffect(() => {
                             : "Pending"}
                       </span>
                     </td>
-                    <td>{new Date(task.start_date).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    })}</td>
-
-                    <td>{new Date(task.end_date).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    })}</td>
+                    <td>
+                      {new Date(task.start_date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td>
+                      {new Date(task.end_date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
                     <td>
                       <div className="d-flex gap-2">
                         <button
@@ -293,6 +310,7 @@ useEffect(() => {
           </table>
         </div>
       </div>
+
 
       {/* Delete Modal */}
       <DeleteTaskModal

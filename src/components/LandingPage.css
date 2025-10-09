@@ -1,0 +1,26 @@
+.landing-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  background-size: cover;
+  overflow: hidden;
+}
+
+.bg-opacity {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.content-box {
+  max-width: 600px;
+}
+
+button {
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}

@@ -7,6 +7,8 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
     task_name: "",
     task_description: "",
     is_complete: 0,
+    priority: "",
+    status: "",
     start_date: "",
     end_date: "",
   });
@@ -19,6 +21,8 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
       task_name: task.task_name || "",
       task_description: task.task_description || "",
       is_complete: task.is_complete ?? 0,
+      priority: task.priority,
+      status: task.status,
       start_date: formatDateForInput(task.start_date),
       end_date: formatDateForInput(task.end_date),
     });
@@ -108,7 +112,29 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
               <label>End Date</label>
               <input type="date" className="form-control" name="end_date" value={formData.end_date} onChange={handleChange} />
             </div>
+
+            <div className="mb-3">
+              <label>Priority</label>
+              <select className="form-control" name="priority" value={formData.priority} onChange={handleChange}>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label>Status</label>
+              <select className="form-control" name="status" value={formData.status} onChange={handleChange}>
+                <option>In Progress</option>
+                <option>Complete</option>
+              </select>
+            </div>
           </div>
+
+          
+
+
+
 
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancel</button>
