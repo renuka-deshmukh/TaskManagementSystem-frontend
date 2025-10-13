@@ -1,14 +1,20 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock, UserPlus } from "lucide-react";
-import { AuthContext } from "../context/AuthProvider"; 
+import { AuthContext } from "../context/AuthProvider";
+import "./Login.css"; // Reuse same CSS as Login for consistency
 
 const Register = () => {
   const [name, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const inputRef = useRef();
   const navigate = useNavigate();
   const { register } = useContext(AuthContext);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   async function handleRegister(event) {
     event.preventDefault();
@@ -29,23 +35,24 @@ const Register = () => {
   }
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card shadow-lg p-4 rounded-4" style={{ width: "400px" }}>
-        <h2 className="text-center mb-4 fw-bold text-success">
+    <div className="login-container d-flex justify-content-center align-items-center vh-100">
+      <div className="login-card p-5 rounded-4 shadow-lg">
+        <h2 className="text-center mb-4 login-title">
           <UserPlus size={28} className="me-2" />
           Create Account
         </h2>
-        <p className="text-center text-muted mb-4">
+        <p className="text-center login-subtitle mb-4">
           Join us today 🚀 It only takes a minute!
         </p>
 
         <form onSubmit={handleRegister}>
           <div className="mb-3">
             <label className="form-label fw-semibold">
-              <User size={18} className="me-2 text-success" />
+              <User size={18} className="me-2" />
               User Name
             </label>
             <input
+              ref={inputRef}
               type="text"
               className="form-control rounded-3"
               placeholder="Enter your username"
@@ -57,7 +64,7 @@ const Register = () => {
 
           <div className="mb-3">
             <label className="form-label fw-semibold">
-              <Mail size={18} className="me-2 text-success" />
+              <Mail size={18} className="me-2" />
               Email Address
             </label>
             <input
@@ -72,7 +79,7 @@ const Register = () => {
 
           <div className="mb-3">
             <label className="form-label fw-semibold">
-              <Lock size={18} className="me-2 text-success" />
+              <Lock size={18} className="me-2" />
               Password
             </label>
             <input
@@ -89,24 +96,21 @@ const Register = () => {
             <input type="checkbox" className="form-check-input" id="terms" required />
             <label className="form-check-label small" htmlFor="terms">
               I agree to the{" "}
-              <a href="#" className="text-success text-decoration-none">
+              <a href="#" className="register-link">
                 Terms & Conditions
               </a>
             </label>
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-success w-100 rounded-3 fw-semibold"
-          >
+          <button type="submit" className="btn login-btn w-100 rounded-3 fw-semibold">
             Register
           </button>
         </form>
 
-        <div className="text-center my-3 text-muted">or</div>
+        <div className="text-center my-3 login-or">or</div>
         <div className="text-center">
           <span className="small">Already have an account? </span>
-          <Link to="/login" className="fw-semibold text-success text-decoration-none">
+          <Link to="/login" className="fw-semibold register-link">
             Login
           </Link>
         </div>

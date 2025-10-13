@@ -143,7 +143,7 @@ const Home = () => {
     <div className="container  py-4" style={{ marginLeft: "200px" }} >
       {userName && (
         <div className="text-center mb-4">
-          <h3 className="fw-bold text-primary">Hello, {userName}! 👋</h3>
+          <h3 className="fw-bold text-black">Hello, {userName}! 👋</h3>
           <p className="text-muted fst-italic">{getRandomQuote()}</p>
         </div>
       )}
@@ -182,7 +182,7 @@ const Home = () => {
           <button
             className="btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold text-white shadow-sm"
             style={{
-              background: "linear-gradient(135deg, #007bff, #0056d2)",
+              background: "linear-gradient(135deg, #9e98ceff, #886cacff)",
               border: "none",
               borderRadius: "12px",
               fontSize: "15px",
@@ -191,11 +191,11 @@ const Home = () => {
             }}
             onMouseEnter={(e) =>
             (e.currentTarget.style.background =
-              "linear-gradient(135deg, #0056d2, #0041a8)")
+              "linear-gradient(135deg,  #817badff, #6d588aff)")
             }
             onMouseLeave={(e) =>
             (e.currentTarget.style.background =
-              "linear-gradient(135deg, #007bff, #0056d2)")
+              "linear-gradient(135deg, #9e98ceff, #886cacff)")
             }
             onClick={() => navigate("/add-task")}
           >

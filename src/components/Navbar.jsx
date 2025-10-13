@@ -34,7 +34,7 @@ const Navbar = () => {
         height: "100vh",
         backgroundImage: darkMode
           ? "linear-gradient(135deg, #1a1a1a, #333)"
-          : "linear-gradient(135deg, #035dbdff, #033e91ff)",
+          : "linear-gradient(135deg, #9e98ceff,  #665dafff)",
         position: "fixed",
         top: 0,
         left: 0,

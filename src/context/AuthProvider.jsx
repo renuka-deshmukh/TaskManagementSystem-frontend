@@ -21,32 +21,31 @@ const AuthProvider = ({ children }) => {
     }
   };
 
- 
 
-const login = async (email, password) => {
-  try {
-    const res = await loginUser({ email, password });
 
-    if (res.data.success) {
-      // ✅ Store token and user info
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem(
-        "loggedUser",
-        JSON.stringify({ email, name: res.data.name, user_id: res.data.user_id })
-      );
+  const login = async (email, password) => {
+    try {
+      const res = await loginUser({ email, password });
 
-      setLoggedUser({ email, name: res.data.name, user_id: res.data.user_id });
+      if (res.data.success) {
+        // ✅ Store token and user info
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem(
+          "loggedUser",
+          JSON.stringify({ email, name: res.data.name, user_id: res.data.user_id })
+        );
 
-      // ✅ Return full response to handle in Login.jsx
-      return res;
+        setLoggedUser({ email, name: res.data.name, user_id: res.data.user_id });
+
+        // ✅ Return full response to handle in Login.jsx
+        return { success: true, msg: res.data.msg };;
+      }
+      //  return { success: false, msg: res.data.msg || "Login failed ❌" };
+    } catch (err) {
+      console.error(err);
+      return { success: false, msg: "Login failed ❌" };
     }
-
-    return res; // even if not successful
-  } catch (err) {
-    console.error(err);
-    return { data: { success: false, msg: "Login failed ❌" } };
-  }
-};
+  };
 
   const logout = () => {
     setLoggedUser(null);
