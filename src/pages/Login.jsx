@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { Mail, Lock, LogIn } from "lucide-react";
+import "./Login.css";
 
 const Login = () => {  
   const [email, setEmail] = useState("");
@@ -11,49 +12,42 @@ const Login = () => {
   const navigate = useNavigate();
   const { loggedUser, login } = useContext(AuthContext);
 
-   useEffect(() => {
+  useEffect(() => {
     inputRef.current.focus();
-
-    // If already logged in, redirect to dashboard
     if (loggedUser) navigate("/dashboard");
   }, [loggedUser, navigate]);
 
   async function handleLogin(e) {
-  e.preventDefault();
-  try {
-    const response = await login(email, password);
-
-    if (response.success) {
-      alert(response.msg);
-      // setIsLoggedIn(true);
-      navigate("/dashboard");
-    } else {
-      alert(response.msg);
+    e.preventDefault();
+    try {
+      const response = await login(email, password);
+      if (response.success) {
+        alert(response.msg);
+        navigate("/dashboard");
+      } else {
+        alert(response.msg);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Login failed ❌");
     }
-  } catch (error) {
-    console.error(error);
-    alert("Login failed ❌");
   }
-}
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div className="card shadow-lg p-4 rounded-4" style={{ width: "400px" }}>
-        {/* Heading */}
-        <h2 className="text-center mb-4 fw-bold text-primary">
+    <div className="login-container d-flex justify-content-center align-items-center vh-100">
+      <div className="login-card p-5 rounded-4 shadow-lg">
+        <h2 className="text-center mb-4 login-title">
           <LogIn size={28} className="me-2" />
           Welcome Back
         </h2>
-        <p className="text-center text-muted mb-4">
+        <p className="text-center login-subtitle mb-4">
           Login to continue 🧑‍💻
         </p>
 
-        {/* Form */}
         <form onSubmit={handleLogin}>
-          {/* Email */}
           <div className="mb-3">
             <label className="form-label fw-semibold">
-              <Mail size={18} className="me-2 text-primary" />
+              <Mail size={18} className="me-2" />
               Email Address
             </label>
             <input
@@ -67,10 +61,9 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
           <div className="mb-3">
             <label className="form-label fw-semibold">
-              <Lock size={18} className="me-2 text-primary" />
+              <Lock size={18} className="me-2" />
               Password
             </label>
             <input
@@ -83,21 +76,15 @@ const Login = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary w-100 rounded-3 fw-semibold"
-          >
+          <button type="submit" className="btn login-btn w-100 rounded-3 fw-semibold">
             Login
           </button>
         </form>
 
-        <div className="text-center my-3 text-muted">or</div>
+        <div className="text-center my-3 login-or">or</div>
         <div className="text-center">
           <span className="small">Don't have an account? </span>
-          <Link
-            to="/register"
-            className="fw-semibold text-primary text-decoration-none"
-          >
+          <Link to="/register" className="fw-semibold register-link">
             Register
           </Link>
         </div>
