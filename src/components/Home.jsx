@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   getAllTasks,
   deleteTask,
@@ -10,6 +10,7 @@ import DeleteTaskModal from "./DeleteTask";
 import EditTaskModal from "./EditTask";
 import './Home.css'
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthProvider";
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
@@ -21,6 +22,11 @@ const Home = () => {
   const [editModalTask, setEditModalTask] = useState(null);
 
   const navigate = useNavigate();
+  const { loggedUser } = useContext(AuthContext);
+
+  const userName = loggedUser?.name;
+
+
 
   async function fetchData() {
     const response = await getAllTasks();
@@ -73,7 +79,7 @@ const Home = () => {
           })
           .catch(err => console.error(err));
       }
-    }, 300); 
+    }, 300);
 
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
@@ -117,8 +123,31 @@ const Home = () => {
     }
   }
 
+  // 🎯 Random motivational / humorous quotes about tasks
+  const getRandomQuote = () => {
+    const quotes = [
+      "New day, new tasks… same coffee ☕.",
+      "Let’s get those tasks done before they get us 😅.",
+      "Productivity level: trying.",
+      "You can’t spell ‘later’ without ‘to-do’.",
+      "Your future self will thank you for doing this (probably).",
+      "Time to turn those pending tasks into completed legends 💪.",
+      "If it’s on your to-do list, it’s basically half done… right?",
+      "Tasks don’t complete themselves (unfortunately).",
+    ];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  };
+
+
   return (
     <div className="container  py-4" style={{ marginLeft: "200px" }} >
+      {userName && (
+        <div className="text-center mb-4">
+          <h3 className="fw-bold text-primary">Hello, {userName}! 👋</h3>
+          <p className="text-muted fst-italic">{getRandomQuote()}</p>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 

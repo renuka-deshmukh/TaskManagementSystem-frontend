@@ -1,6 +1,6 @@
 // src/components/EditTaskModal.js
 import React, { useState, useEffect } from "react";
-import { editTask } from "../api/taskApi"; 
+import { editTask } from "../api/taskApi";
 
 const EditTaskModal = ({ task, onClose, onUpdated }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  
+
   useEffect(() => {
     if (!task) return;
     setFormData({
@@ -30,9 +30,14 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
 
   function formatDateForInput(d) {
     if (!d) return "";
-    const s = String(d);
-    return s.includes("T") ? s.split("T")[0] : s; // handles ISO strings and yyyy-mm-dd
+    const date = new Date(d);
+    // Get local date components
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`; // yyyy-mm-dd for input[type=date]
   }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -113,28 +118,38 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
               <input type="date" className="form-control" name="end_date" value={formData.end_date} onChange={handleChange} />
             </div>
 
-            <div className="mb-3">
-              <label>Priority</label>
-              <select className="form-control" name="priority" value={formData.priority} onChange={handleChange}>
-                <option>High</option>
-                <option>Medium</option>
-                <option>Low</option>
-              </select>
-            </div>
 
-            <div className="mb-3">
-              <label>Status</label>
-              <select className="form-control" name="status" value={formData.status} onChange={handleChange}>
-                <option>In Progress</option>
-                <option>Complete</option>
-              </select>
-            </div>
+            {/* Status */}
+<div className="mb-3">
+  <label>Status</label>
+  <select
+    className="form-control"
+    name="is_complete"
+    value={formData.is_complete}
+    onChange={handleChange}
+  >
+    <option value={0}>In Progress</option>
+    <option value={1}>Completed</option>
+  </select>
+</div>
+
+{/* Priority */}
+<div className="mb-3">
+  <label>Priority</label>
+  <select
+    className="form-control"
+    name="priority"
+    value={formData.priority}
+    onChange={handleChange}
+  >
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+</div>
+
+
           </div>
-
-          
-
-
-
 
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose} disabled={loading}>Cancel</button>

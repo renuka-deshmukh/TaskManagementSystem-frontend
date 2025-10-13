@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { Mail, Lock, LogIn } from "lucide-react";
 
-const Login = ({ setIsLoggedIn }) => {  
+const Login = () => {  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,21 +11,24 @@ const Login = ({ setIsLoggedIn }) => {
   const navigate = useNavigate();
   const { loggedUser, login } = useContext(AuthContext);
 
-  useEffect(() => {
+   useEffect(() => {
     inputRef.current.focus();
-  }, []);
+
+    // If already logged in, redirect to dashboard
+    if (loggedUser) navigate("/dashboard");
+  }, [loggedUser, navigate]);
 
   async function handleLogin(e) {
   e.preventDefault();
   try {
     const response = await login(email, password);
 
-    if (response.data.success) {
-      alert(response.data.msg);
-      setIsLoggedIn(true);
+    if (response.success) {
+      alert(response.msg);
+      // setIsLoggedIn(true);
       navigate("/dashboard");
     } else {
-      alert(response.data.msg);
+      alert(response.msg);
     }
   } catch (error) {
     console.error(error);

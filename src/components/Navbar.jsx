@@ -97,7 +97,7 @@ const Navbar = () => {
           <div className="d-flex align-items-center">
             <FaUserCircle size={25} className="me-2" />
             <span className="fw-semibold">
-              {loggedUser?.name || "User"}
+              {loggedUser?.name || "User"}❤️
             </span>
 
           </div>
