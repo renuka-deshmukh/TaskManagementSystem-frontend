@@ -38,7 +38,7 @@ const TaskForm = () => {
         priority: "Medium",
         status: "In Progress",
       });
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setMessage("Error creating task");
     }

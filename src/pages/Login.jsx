@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { Mail, Lock, LogIn } from "lucide-react";
 
-const Login = ({ setIsLoggedIn }) => {  // ✅ Accept prop
+const Login = ({ setIsLoggedIn }) => {  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -15,22 +15,23 @@ const Login = ({ setIsLoggedIn }) => {  // ✅ Accept prop
     inputRef.current.focus();
   }, []);
 
-  function handleLogin(e) {
-    e.preventDefault();
-    try {
-      const msg = login(email, password);
+  async function handleLogin(e) {
+  e.preventDefault();
+  try {
+    const response = await login(email, password);
 
-      if (msg.includes("successful")) { // ✅ Ensure correct success check
-        alert(msg);
-        setIsLoggedIn(true); // ✅ Update parent state
-        navigate("/dashboard");
-      } else {
-        alert("Invalid credentials ❌");
-      }
-    } catch (error) {
-      console.log(error);
+    if (response.data.success) {
+      alert(response.data.msg);
+      setIsLoggedIn(true);
+      navigate("/dashboard");
+    } else {
+      alert(response.data.msg);
     }
+  } catch (error) {
+    console.error(error);
+    alert("Login failed ❌");
   }
+}
 
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">

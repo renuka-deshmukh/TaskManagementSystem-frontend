@@ -53,9 +53,8 @@ const Navbar = () => {
         <li className="nav-item mb-2">
           <Link
             to="/dashboard"
-            className={`nav-link d-flex align-items-center rounded-3 ${
-              location.pathname === "/dashboard" ? "active-link" : "text-white-50"
-            }`}
+            className={`nav-link d-flex align-items-center rounded-3 ${location.pathname === "/dashboard" ? "active-link" : "text-white-50"
+              }`}
           >
             <FaHome className="me-2" />
             Dashboard
@@ -65,9 +64,8 @@ const Navbar = () => {
         <li className="nav-item mb-2">
           <Link
             to="/add-task"
-            className={`nav-link d-flex align-items-center rounded-3 ${
-              location.pathname === "/add-task" ? "active-link" : "text-white-50"
-            }`}
+            className={`nav-link d-flex align-items-center rounded-3 ${location.pathname === "/add-task" ? "active-link" : "text-white-50"
+              }`}
           >
             <FaPlusCircle className="me-2" />
             Add Task
@@ -77,9 +75,8 @@ const Navbar = () => {
         <li className="nav-item mb-2">
           <Link
             to="/display-tasks"
-            className={`nav-link d-flex align-items-center rounded-3 ${
-              location.pathname === "/display-tasks" ? "active-link" : "text-white-50"
-            }`}
+            className={`nav-link d-flex align-items-center rounded-3 ${location.pathname === "/display-tasks" ? "active-link" : "text-white-50"
+              }`}
           >
             <FaListUl className="me-2" />
             Tasks
@@ -102,6 +99,7 @@ const Navbar = () => {
             <span className="fw-semibold">
               {loggedUser?.name || "User"}
             </span>
+
           </div>
         </div>
 
@@ -119,15 +117,26 @@ const Navbar = () => {
               {darkMode ? <FaSun /> : <FaMoon />}
             </button>
 
-            <button
-              className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center rounded-3"
-              onClick={handleLogout}
-            >
-              <FaSignOutAlt className="me-2" />
-              Logout
-            </button>
+            {loggedUser ? (
+              <button
+                className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center rounded-3"
+                onClick={handleLogout}
+              >
+                <FaSignOutAlt className="me-2" />
+                Logout
+              </button>
+            ) : (
+              <button
+                className="btn btn-outline-success w-100 d-flex align-items-center justify-content-center rounded-3"
+                onClick={() => navigate("/login")}
+              >
+                <FaUserCircle className="me-2" />
+                Login
+              </button>
+            )}
           </div>
         )}
+
 
         <div className="text-center text-white-50 small mt-3">
           © 2025 ToDo App

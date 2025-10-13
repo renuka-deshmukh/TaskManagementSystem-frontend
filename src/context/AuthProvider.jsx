@@ -1,59 +1,56 @@
-// AuthProvider.js
 import React, { createContext, useState, useEffect } from "react";
+import { registerUser, loginUser } from "../api/userApi";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [loggedUser, setLoggedUser] = useState(null);
 
-  // Load logged user from localStorage on refresh
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedUser");
-    if (storedUser) {
-      setLoggedUser(JSON.parse(storedUser));
-    }
+    if (storedUser) setLoggedUser(JSON.parse(storedUser));
   }, []);
 
-  // Register user
-  const register = (name, email, password) => {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    if (users.some((u) => u.email === email)) {
-      return "User already exists ❌";
+  const register = async (name, email, password) => {
+    try {
+      const res = await registerUser({ name, email, password });
+      return res.data.msg;
+    } catch (err) {
+      console.error(err);
+      return err.response?.data?.msg || "Registration failed ❌";
     }
-
-    const newUser = { name, email, password }; // ✅ save name also
-    users.push(newUser);
-
-    localStorage.setItem("users", JSON.stringify(users));
-    return "Registration successful ✅";
   };
 
+ 
 
-  // Login user
-  const login = (email, password) => {
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+const login = async (email, password) => {
+  try {
+    const res = await loginUser({ email, password });
 
-    if (users.length === 0) {
-      return "No registered users found. Please register first ❌";
+    if (res.data.success) {
+      // ✅ Store token and user info
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem(
+        "loggedUser",
+        JSON.stringify({ email, name: res.data.name, user_id: res.data.user_id })
+      );
+
+      setLoggedUser({ email, name: res.data.name, user_id: res.data.user_id });
+
+      // ✅ Return full response to handle in Login.jsx
+      return res;
     }
 
-    const foundUser = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    return res; // even if not successful
+  } catch (err) {
+    console.error(err);
+    return { data: { success: false, msg: "Login failed ❌" } };
+  }
+};
 
-    if (foundUser) {
-      setLoggedUser(foundUser);
-      localStorage.setItem("loggedUser", JSON.stringify(foundUser));
-      return "Login successful ✅";   // always return message
-    }
-
-    return null; // invalid credentials
-  };
-
-  // Logout user
   const logout = () => {
     setLoggedUser(null);
+    localStorage.removeItem("token");
     localStorage.removeItem("loggedUser");
   };
 
