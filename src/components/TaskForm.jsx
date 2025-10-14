@@ -26,10 +26,9 @@ const TaskForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await createTask(task);
-      setMessage(response.data.msg);
+      // setMessage(response.data.msg);
       setTask({
         task_name: "",
         task_description: "",
@@ -39,8 +38,9 @@ const TaskForm = () => {
         status: "In Progress",
       });
       navigate("/dashboard");
+      toast("Task added successfully");
     } catch (err) {
-      setMessage("Error creating task");
+      toast("Error creating task");
     }
   };
 
@@ -67,7 +67,7 @@ const TaskForm = () => {
               width: "60px",
               height: "60px",
               background:
-                "linear-gradient(135deg, #007bff, #6f42c1)",
+                "linear-gradient(135deg, #55445fff, #6f42c1)",
               color: "white",
               fontSize: "24px",
             }}
@@ -169,7 +169,7 @@ const TaskForm = () => {
             type="submit"
             className="btn w-100 d-flex align-items-center justify-content-center gap-2 py-2 mt-3 fw-semibold text-white shadow"
             style={{
-              background: "linear-gradient(135deg, #007bff, #6f42c1)",
+              background: "linear-gradient(135deg, #8c6fa7ff, #6f42c1)",
               border: "none",
               borderRadius: "12px",
               fontSize: "16px",
@@ -177,7 +177,7 @@ const TaskForm = () => {
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.background =
-                "linear-gradient(135deg, #6f42c1, #007bff)")
+                "linear-gradient(135deg, #6f42c1, #472566ff)")
             }
             onMouseLeave={(e) =>
               (e.currentTarget.style.background =

@@ -38,8 +38,8 @@ const Navbar = () => {
         position: "fixed",
         top: 0,
         left: 0,
-        borderTopRightRadius: "10px",
-        borderBottomRightRadius: "10px",
+        // borderTopRightRadius: "10px",
+        // borderBottomRightRadius: "10px",
         transition: "background 0.3s",
       }}
     >

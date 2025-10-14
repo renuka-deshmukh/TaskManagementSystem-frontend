@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 import { Mail, Lock, LogIn } from "lucide-react";
 import "./Login.css";
+import { toast } from "react-toastify";
 
 const Login = () => {  
   const [email, setEmail] = useState("");
@@ -22,14 +23,14 @@ const Login = () => {
     try {
       const response = await login(email, password);
       if (response.success) {
-        alert(response.msg);
+        toast(response.msg);
         navigate("/dashboard");
       } else {
-        alert(response.msg);
+        toast(response.msg);
       }
     } catch (error) {
       console.error(error);
-      alert("Login failed ❌");
+      toast("Login failed ❌");
     }
   }
 

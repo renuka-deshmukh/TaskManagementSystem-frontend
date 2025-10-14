@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock, UserPlus } from "lucide-react";
 import { AuthContext } from "../context/AuthProvider";
 import "./Login.css"; // Reuse same CSS as Login for consistency
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [name, setUserName] = useState("");
@@ -23,10 +24,10 @@ const Register = () => {
       const message = await register(name, email, password);
 
       if (message?.includes("success")) {
-        alert("Registration successful! Please login.");
+        toast("Registration successful! Please login.");
         navigate("/login");
       } else {
-        alert(message || "Registration failed. Please try again.");
+        toast(message || "Registration failed. Please try again.");
       }
     } catch (error) {
       console.error("Register error:", error);

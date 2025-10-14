@@ -11,6 +11,8 @@ import EditTaskModal from "./EditTask";
 import './Home.css'
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
+import { toast } from "react-toastify";
+
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
@@ -25,8 +27,6 @@ const Home = () => {
   const { loggedUser } = useContext(AuthContext);
 
   const userName = loggedUser?.name;
-
-
 
   async function fetchData() {
     const response = await getAllTasks();
@@ -103,6 +103,7 @@ const Home = () => {
       if (response.data.success) {
         setShowModal(false);
         setSelectedTask(null);
+        toast("Task deleted successfully!")
         fetchData();
       }
     } catch (err) {
@@ -116,7 +117,7 @@ const Home = () => {
       if (response.data.success) {
         fetchData();
       } else {
-        alert("Unable to update task status");
+        toast("Unable to update task status");
       }
     } catch (err) {
       console.error("Error updating:", err);
@@ -151,9 +152,42 @@ const Home = () => {
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
+      </div>
+
+      {/* Search Bar */}
+      <div className="row mb-4">
+        <div className="col-md-3">
+          <input
+            type="text"
+            className="form-control shadow-sm"
+            placeholder="🔍 Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <ul className="nav nav-pills mb-3 shadow-sm rounded py-2 px-3 bg-white d-flex align-items-center">
         <div className="d-flex align-items-center gap-3">
+          {["All", "In Progress", "Complete"].map((filter) => (
+            <li className="nav-item" key={filter}>
+              <button
+                className={`nav-link ${activeFilter === filter ? "active" : ""}`}
+                onClick={() => setActiveFilter(filter)}
+                style={{
+                  fontWeight: 500,
+                  borderRadius: "20px",
+                  transition: "0.3s",
+                }}
+              >
+                {filter}
+              </button>
+            </li>
+          ))}
+
           {/* Priority Filter Dropdown */}
-          <div className="dropdown">
+          <div className="dropdown px-3">
             <button
               className="btn btn-outline-secondary dropdown-toggle"
               type="button"
@@ -164,11 +198,15 @@ const Home = () => {
               <FaFilter className="me-1" />
               {activeFilter === "All" ? "Filter Priority" : activeFilter}
             </button>
-            <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="priorityFilter">
+            <ul
+              className="dropdown-menu dropdown-menu-end"
+              aria-labelledby="priorityFilter"
+            >
               {["All", "High", "Medium", "Low"].map((priority) => (
                 <li key={priority}>
                   <button
-                    className={`dropdown-item ${activeFilter === priority ? "active" : ""}`}
+                    className={`dropdown-item ${activeFilter === priority ? "active" : ""
+                      }`}
                     onClick={() => setActiveFilter(priority)}
                   >
                     {priority === "All" ? "All Priorities" : priority}
@@ -177,10 +215,12 @@ const Home = () => {
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Add Task Button */}
+        {/* Push New Task button to the right */}
+        <div className="ms-auto">
           <button
-            className="btn d-flex align-items-center justify-content-center gap-2 px-4 py-2 fw-semibold text-white shadow-sm"
+            className="btn d-flex align-items-center justify-content-center gap-2 px-4 fw-semibold text-white shadow-sm"
             style={{
               background: "linear-gradient(135deg, #9e98ceff, #886cacff)",
               border: "none",
@@ -203,49 +243,17 @@ const Home = () => {
             New Task
           </button>
         </div>
-
-      </div>
-
-      {/* Filter Tabs */}
-      <ul className="nav nav-pills mb-3 shadow-sm rounded py-2 px-3 bg-white">
-        {["All", "In Progress", "Complete"].map((filter) => (
-          <li className="nav-item" key={filter}>
-            <button
-              className={`nav-link ${activeFilter === filter ? "active" : ""
-                }`}
-              onClick={() => setActiveFilter(filter)}
-              style={{
-                fontWeight: 500,
-                borderRadius: "20px",
-                transition: "0.3s",
-              }}
-            >
-              {filter}
-            </button>
-
-          </li>
-        ))}
       </ul>
 
-      {/* Search Bar */}
-      <div className="row mb-4">
-        <div className="col-md-6">
-          <input
-            type="text"
-            className="form-control shadow-sm"
-            placeholder="🔍 Search tasks..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
+
+
 
       {/* Task Table */}
       <div className="card shadow border-0 rounded-4 overflow-hidden">
-        <div className="card-body p-0">
+        <div className="table-responsive">
           <table className="table table-hover align-middle mb-0">
             <thead className="table-light">
-              <tr>
+              <tr className="text-center">
                 <th>Sr. No</th>
                 <th>Name & Description</th>
                 <th>Priority</th>

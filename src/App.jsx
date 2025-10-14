@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import LandingPage from "./components/LandingPage";
 import { AuthProvider, AuthContext } from "./context/AuthProvider";
 import { useContext } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function AppRoutes() {
   const { loggedUser } = useContext(AuthContext);
@@ -32,6 +34,7 @@ function AppRoutes() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
     </>
   );
 }
@@ -41,8 +44,21 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <AppRoutes />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+          theme="colored"
+          toastStyle={{ backgroundColor: "#E6E6FA", color: "#4B0082" }} // Light purple bg + dark text
+        />
       </AuthProvider>
     </BrowserRouter>
+
+
   );
 }
 
