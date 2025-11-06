@@ -72,16 +72,6 @@ const Navbar = () => {
           </Link>
         </li>
 
-        <li className="nav-item mb-2">
-          <Link
-            to="/display-tasks"
-            className={`nav-link d-flex align-items-center rounded-3 ${location.pathname === "/display-tasks" ? "active-link" : "text-white-50"
-              }`}
-          >
-            <FaListUl className="me-2" />
-            Tasks
-          </Link>
-        </li>
       </ul>
 
       {/* --- User Profile Section --- */}

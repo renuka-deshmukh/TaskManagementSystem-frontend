@@ -10,6 +10,7 @@ import { AuthProvider, AuthContext } from "./context/AuthProvider";
 import { useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Footer from "./components/Footer";
 
 function AppRoutes() {
   const { loggedUser } = useContext(AuthContext);
@@ -34,7 +35,7 @@ function AppRoutes() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-
+     {loggedUser && <Footer />}
     </>
   );
 }
@@ -55,6 +56,7 @@ function App() {
           theme="colored"
           toastStyle={{ backgroundColor: "#E6E6FA", color: "#4B0082" }} // Light purple bg + dark text
         />
+        
       </AuthProvider>
     </BrowserRouter>
 

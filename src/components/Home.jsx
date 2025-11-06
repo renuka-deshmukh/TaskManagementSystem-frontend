@@ -149,27 +149,12 @@ const Home = () => {
         </div>
       )}
 
-      {/* Header Section */}
-      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-      </div>
+      {/* Filter + Search + New Task Row */}
+      <ul className="nav nav-pills mb-3 shadow-sm rounded py-2 px-3 bg-white d-flex align-items-center flex-wrap">
 
-      {/* Search Bar */}
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <input
-            type="text"
-            className="form-control shadow-sm"
-            placeholder="🔍 Search tasks..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Filter Tabs */}
-      <ul className="nav nav-pills mb-3 shadow-sm rounded py-2 px-3 bg-white d-flex align-items-center">
-        <div className="d-flex align-items-center gap-3">
+        {/* Left side — Filter Tabs */}
+        <div className="d-flex align-items-center gap-3 flex-wrap">
           {["All", "In Progress", "Complete"].map((filter) => (
             <li className="nav-item" key={filter}>
               <button
@@ -187,7 +172,7 @@ const Home = () => {
           ))}
 
           {/* Priority Filter Dropdown */}
-          <div className="dropdown px-3">
+          <div className="dropdown">
             <button
               className="btn btn-outline-secondary dropdown-toggle"
               type="button"
@@ -199,14 +184,13 @@ const Home = () => {
               {activeFilter === "All" ? "Filter Priority" : activeFilter}
             </button>
             <ul
-              className="dropdown-menu dropdown-menu-end"
+              className="dropdown-menu"
               aria-labelledby="priorityFilter"
             >
               {["All", "High", "Medium", "Low"].map((priority) => (
                 <li key={priority}>
                   <button
-                    className={`dropdown-item ${activeFilter === priority ? "active" : ""
-                      }`}
+                    className={`dropdown-item ${activeFilter === priority ? "active" : ""}`}
                     onClick={() => setActiveFilter(priority)}
                   >
                     {priority === "All" ? "All Priorities" : priority}
@@ -217,21 +201,32 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Push New Task button to the right */}
+        {/* Center — Search Bar */}
+        <div className="mx-auto col-md-3">
+          <input
+            type="text"
+            className="form-control shadow-sm"
+            placeholder="🔍 Search tasks..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        {/* Right side — New Task button */}
         <div className="ms-auto">
           <button
             className="btn d-flex align-items-center justify-content-center gap-2 px-4 fw-semibold text-white shadow-sm"
             style={{
               background: "linear-gradient(135deg, #9e98ceff, #886cacff)",
               border: "none",
-              borderRadius: "12px",
+              // borderRadius: "12px",
               fontSize: "15px",
               letterSpacing: "0.5px",
               transition: "all 0.3s ease",
             }}
             onMouseEnter={(e) =>
             (e.currentTarget.style.background =
-              "linear-gradient(135deg,  #817badff, #6d588aff)")
+              "linear-gradient(135deg, #817badff, #6d588aff)")
             }
             onMouseLeave={(e) =>
             (e.currentTarget.style.background =
@@ -243,8 +238,8 @@ const Home = () => {
             New Task
           </button>
         </div>
-      </ul>
 
+      </ul>
 
 
 
@@ -266,7 +261,7 @@ const Home = () => {
             <tbody>
               {filteredTasks.length > 0 ? (
                 filteredTasks.map((task, i) => (
-                  <tr key={i}>
+                  <tr key={i} className="text-center">
                     <td>{i + 1}</td>
                     <td>
                       <div>
@@ -318,7 +313,7 @@ const Home = () => {
                         year: "numeric",
                       })}
                     </td>
-                    <td>
+                    <td className="d-flex justify-content-center gap-2">
                       <div className="d-flex gap-2">
                         <button
                           className="btn btn-outline-success btn-sm rounded-circle"
